@@ -1,0 +1,4 @@
+abe:x:4:10:Honest Abe Lincoln:/home/abe:/bin/bash
+tj:x:5:10:Thomas Jefferson:/home/tj:/bin/bash
+dorothy:x:6:10:Dorothy Gale:/home/dorothy:/bin/bash
+toto:x:7:10:Toto Gale:/home/toto:/bin/bash

@@ -1,0 +1,116 @@
+.\" ========================================================
+.TH PATHFIND 1 "" "1.00"
+.\" ========================================================
+.SH NAME
+pathfind \(em find files in a directory path
+.\" ========================================================
+.SH SYNOPSIS
+.B pathfind
+[
+.B \-\-all
+] [
+.B \-\-?
+] [
+.B \-\-help
+] [
+.B \-\-version
+]
+.if n .ti +9n
+.\" .if t .ti +\w'\fBpathfind\fP\ 'u
+envvar [ file(s) ]
+.\" ========================================================
+.SH OPTIONS
+.B pathfind
+options can be prefixed with either one or two hyphens, and
+can be abbreviated to any unique prefix.  Thus,
+.BR \-v ,
+.BR \-ver ,
+and
+.B \-\-version
+are equivalent.
+.PP
+To avoid confusion with options, if a filename begins with a
+hyphen, it must be disguised by a leading absolute or
+relative directory path, e.g.,
+.I /tmp/-foo
+or
+.IR ./-foo .
+.\" --------------------------------------------------------
+.TP \w'\fB\-version\fP'u+3n
+.B \-all
+Search all directories for each specified file, instead of
+reporting just the first instance of each found in the
+search path.
+.\" --------------------------------------------------------
+.TP
+.B \-?
+Same as
+.BR \-help .
+.\" --------------------------------------------------------
+.TP
+.B \-help
+Display a brief help message on
+.IR stdout ,
+giving a usage description, and then terminate immediately
+with a success return code.
+.\" --------------------------------------------------------
+.TP
+.B \-version
+Display the program version number and release date on
+.IR stdout ,
+and then terminate immediately with a success return code.
+.\" ========================================================
+.SH DESCRIPTION
+.B pathfind
+searches a colon-separated directory search path defined by
+the value of the environment variable, \fIenvvar\fP, for
+specified files, reporting their full path on
+.IR stdout ,
+or complaining \fIfilename: not found\fP on
+.I stderr
+if a file cannot be found anywhere in the search path.
+.PP
+.BR pathfind 's
+exit status is 0 on success, and otherwise is the number of
+files that could not be found, possibly capped at the
+exit code limit of 125.
+.PP
+For example,
+.RS
+.nf
+\&\fCpathfind PATH ls\fP
+.fi
+.RE
+reports
+.RS
+.nf
+\&\fC/bin/ls\fP
+.fi
+.RE
+on most Unix systems, and
+.RS
+.nf
+\&\fCpathfind --all PATH gcc g++\fP
+.fi
+.RE
+reports
+.RS
+.nf
+\&\fC/usr/local/bin/gcc
+/usr/bin/gcc
+/usr/local/gnat/bin/gcc
+/usr/local/bin/g++
+/usr/bin/g++\fP
+.fi
+.RE
+on some systems.
+.\" ========================================================
+.SH "SEE ALSO"
+.BR find (1),
+.BR locate (1),
+.BR slocate (1),
+.BR type (1),
+.BR whence (1),
+.BR where (1),
+.BR whereis (1).
+.\" ========================================================

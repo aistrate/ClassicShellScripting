@@ -1,0 +1,352 @@
+.\" ========================================================
+.TH BUILD-ALL 1 "" "1.00"
+.\" ========================================================
+.SH NAME
+build-all \(em build software distributions on remote systems in parallel
+.\" ========================================================
+.SH SYNOPSIS
+.B build-all
+[
+.B \-\-?
+]
+[
+.BI \-\-all " target(s)"
+]
+[
+.BI \-\-check " target(s)"
+]
+.if n .ti +10n
+[
+.BI \-\-configure " options"
+]
+[
+.B \-\-help
+]
+.if n .ti +10n
+.if t .ti +\w'\fBbuild-all\fP\ 'u
+[
+.BI \-\-logdirectory " dir"
+]
+.if n .ti +10n
+[
+.BI \-\-on " [user@]host[:dir][,envfile] .\|.\|."
+]
+.if n .ti +10n
+[
+.BI \-\-source " dir(s)"
+]
+.if t .ti +\w'\fBbuild-all\fP\ 'u
+[
+.BI \-\-userhosts " file(s)"
+]
+.if n .ti +10n
+[
+.B \-\-version
+]
+package(s)
+.\" ========================================================
+.SH OPTIONS
+.B build-all
+options can be prefixed with either one or two hyphens, and
+can be abbreviated to any unique prefix.  Thus,
+.BR \-v ,
+.BR \-ver ,
+and
+.B \-\-version
+are equivalent.
+.PP
+To avoid confusion with options, if a filename begins with a
+hyphen, it must be disguised by a leading absolute or
+relative directory path, e.g.,
+.I /tmp/-foo
+or
+.IR ./-foo .
+.\" --------------------------------------------------------
+.TP \w'\fB\-configure\fP\ \fIoptions\fP'u+3n
+.BI \-\-all " target(s)"
+Specify the default
+.BR make (1)
+targets to build the package [default: empty].
+.\" --------------------------------------------------------
+.TP
+.B \-\-?
+Same as
+.BR \-\-help .
+.\" --------------------------------------------------------
+.TP
+.BI \-\-check " target(s)"
+Specify the default
+.BR make (1)
+targets to test the package [default:
+.IR check ].
+.\" --------------------------------------------------------
+.TP
+.BI \-\-configure " options"
+Specify any options needed by the
+.BR configure (1)
+script.
+.\" --------------------------------------------------------
+.TP
+.B \-\-help
+Display a brief help message on
+.IR stdout ,
+giving a usage description, and then terminate immediately
+with a success return code.
+.\" --------------------------------------------------------
+.TP
+.BI \-\-logdirectory " dir"
+Specify an alternate log file directory.  By default, logs
+are created in a subdirectory named
+.I logs/package-x.y.z
+for package
+.I package-x.y.z
+in the directory in which the package archive is found.  If
+the directory cannot be created or written to, a default log
+directory is chosen and reported.
+.\" --------------------------------------------------------
+.TP
+.BI \-\-on " [user@]host[:dir][,envfile] .\|.\|."
+Specify an alternate list of hosts on which to build the
+packages.  The list must be quoted if it contains spaces or
+other shell metacharacters.  This option suppresses reading
+the host list from the
+.I $HOME/.build/userhosts
+initialization file, allowing builds to be restricted to
+a particular set of hosts.
+.IP
+In each host specification, the username may be omitted if
+it is the same as on the current host.  The hostname is
+mandatory.  The directory in which packages are unbundled
+and built is given by
+.IR dir :
+a default directory is chosen and reported if that value is
+omitted.  The optional environment file,
+.IR envfile ,
+on the initiating host
+.RI ( not
+the remote host), provides settings of environment variables
+for
+.BR configure (1),
+in the form of
+.I key=value
+assignments.
+.IP
+This option may be given any number of times.
+.\" --------------------------------------------------------
+.TP
+.BI \-\-source " dir(s)"
+Specify an additional list of directories to search for
+source archives.  The list must be quoted if it contains
+spaces or other shell metacharacters.  That list will be
+searched before the directories in the
+.I $HOME/.build/directories
+list, or the built-in list.
+.IP
+This option may be given any number of times.
+.\" --------------------------------------------------------
+.TP
+.BI \-\-userhosts " file(s)"
+Specify an alternate list of userhosts files to replace the
+default initialization file,
+.IR $HOME/.build/userhosts .
+The list must be quoted if it contains spaces or other shell
+metacharacters.
+.IP
+If a specified userhosts file is not readable as given, it
+is looked for in
+.IR $HOME/.build ,
+.IP
+This option may be given any number of times.
+.IP
+Settings from the
+.B \-\-on
+option override this option, so the two should be considered
+mutually exclusive.
+.IP
+This option makes it convenient to create sets of build
+hosts grouped by compiler, platform, or package, to
+accommodate packages that are known to build only in certain
+limited environments.
+.\" --------------------------------------------------------
+.TP
+.B \-\-version
+Display the program version number and release date on
+.IR stdout ,
+and then terminate immediately with a success return code.
+.\" ========================================================
+.SH DESCRIPTION
+.B build-all
+provides for automated software builds on one or more
+hosts, in parallel, with build logs collected in
+package-specific directories on the initiating host, using
+the secure shell to communicate with the remote hosts.
+.PP
+The log directory is always reported on
+.IR stdout ,
+and in an email message.
+.PP
+Log files are named with the package name, version, build
+host, and an ISO 8601:2000 odometer-style time stamp, like
+this:
+.IR package-x.y.z.hostname.yyyy.mm.dd.hh.mm.ss.log .
+.PP
+Packages should conform to GNU conventions for
+software packaging: an archive file
+.I package-x.y.z.tar.gz
+unbundles into a directory named
+.I package-x.y.z
+in which there is an optional
+.BR configure (1)
+script, and a
+.IR Makefile .
+Running
+.BR make (1)
+in that directory should build the package, and
+.B "make check"
+(overridable with the
+.BI \-\-check " target(s)"
+option) should run validation tests.
+.PP
+.B build-all
+recognizes archives in these formats:
+.IR .jar ,
+.IR .tar ,
+.IR .tar.bz2 ,
+.IR .tar.gz ,
+.IR .tar.Z ,
+and
+.IR .zip .
+It is the user's responsibility to ensure with suitable
+shell startup files that on each remote host, GNU
+.BR tar (1)
+and
+.BR unzip (1)
+are found first in the search path, since they are needed to
+unbundle packages.
+.PP
+Installation after builds is
+.I not
+automated; it is imperative to examine the build logs before
+deciding whether it is safe to issue
+.B "make install"
+in a remote build directory.
+.\" ========================================================
+.SH "FILES"
+In this section,
+.I $REMOTEHOME
+refers to the home directory on a remote build host.
+.PP
+Comments are supported in all of these files: they run from
+sharp (#) to end of line.
+.PP
+.\" --------------------------------------------------------
+.TP  \w'\fI$REMOTEHOME/.build/begin\fP'u+1n
+.I $REMOTEHOME/.build/begin
+Commands to be executed in the context of the login shell on
+the remote host before the build begins.  This file can be
+used to augment the search path,
+.IR PATH ,
+for shells like
+.BR ksh (1)
+and
+.BR sh (1)
+that do not provide for startup files for other than login
+sessions.  Any output produced will be recorded near the
+start of the build log file.
+.\" --------------------------------------------------------
+.TP
+.I $HOME/.build/directories
+The list of local directories to search for package archive
+files.  If that file cannot be found, a default list of
+source directories is provided.
+.\" --------------------------------------------------------
+.TP
+.I $REMOTEHOME/.build/end
+Commands to be executed in the context of the login shell on
+the remote host after the build ends.  Any output produced
+will be recorded near the end of the build log file.
+.\" --------------------------------------------------------
+.TP
+.I $HOME/.build/userhosts
+The default list of build hosts, with entries like this:
+.IP
+.RS
+.RS
+.nf
+\&\fCjones@example.com:/local/build,$HOME/.build/c99\fP
+.fi
+.RE
+.RE
+.IP
+The username, build directory, and environment file are
+optional.  Except for the remote build directory, all files
+listed are on the initiating host.
+.\" --------------------------------------------------------
+.TP
+.I envfile
+Environment files contain settings of environment variables
+for
+.BR configure (1)
+on the remote systems.  Filenames are arbitrary: they are
+set in entries in the
+.I $HOME/.build/userhosts
+file or similar files specified by the
+.B \-\-userhosts
+option, or else in command-line
+.B \-\-on
+options. For example, an environment file with
+.IP
+.RS
+.RS
+.nf
+CC=c99
+CFLAGS="-O3 -D_POSIX_SOURCE"
+CXX=CC
+CXXFLAGS="-O3 -D_POSIX_SOURCE"
+.fi
+.RE
+.RE
+.IP
+specifies the C and C++ compilers, and compiler optimization
+flags, to be used for the build.
+.\" ========================================================
+.SH "EXAMPLES"
+Build two packages everywhere:
+.RS
+.nf
+\&\fCbuild-all coreutils-5.0.0 gawk-3.1.2\fP
+.fi
+.RE
+Build package on a specific host:
+.RS
+.nf
+\&\fCbuild-all --on loaner.example.com gnupg-1.2.1\fP
+.fi
+.RE
+Build package from nonstandard location:
+.RS
+.nf
+\&\fCbuild-all --source $HOME/work butter-0.3.7\fP
+.fi
+.RE
+Build package in POSIX compilation environment:
+.RS
+.nf
+\&\fCbuild-all --userhosts posixhosts numlib-3.2.1\fP
+.fi
+.RE
+.\" ========================================================
+.SH "SEE ALSO"
+.BR autoconf (1),
+.BR autoheader (1),
+.BR automake (1),
+.BR configure (1),
+.BR jar (1),
+.BR ksh (1),
+.BR make (1),
+.BR scp (1),
+.BR sh (1),
+.BR ssh (1),
+.BR tar (1),
+.BR unzip (1).
+.\" ========================================================

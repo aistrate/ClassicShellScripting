@@ -1,0 +1,8 @@
+bin:x:1:1:bin:/bin:/sbin/nologin
+chico:x:12501:1000:Chico Marx:/home/chico:/bin/bash
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+groucho:x:12503:2000:Groucho Marx:/home/groucho:/bin/sh
+gummo:x:12504:3000:Gummo Marx:/home/gummo:/usr/local/bin/ksh93
+harpo:x:12502:1000:Harpo Marx:/home/harpo:/bin/ksh
+root:x:0:0:root:/root:/bin/bash
+zeppo:x:12505:1000:Zeppo Marx:/home/zeppo:/bin/zsh

@@ -1,0 +1,125 @@
+This is pathfind.info, produced by makeinfo version 4.6 from
+pathfind.texi.
+
+
+File: pathfind.info,  Node: Top,  Next: NAME,  Up: (dir)
+
+PATHFIND 1 "" "1.00
+*******************
+
+* Menu:
+
+* NAME::
+* SYNOPSIS::
+* OPTIONS::
+* DESCRIPTION::
+* SEE ALSO::
+
+
+File: pathfind.info,  Node: NAME,  Next: SYNOPSIS,  Prev: Top,  Up: Top
+
+NAME
+====
+
+pathfind -- find files in a directory path
+
+
+File: pathfind.info,  Node: SYNOPSIS,  Next: OPTIONS,  Prev: NAME,  Up: Top
+
+SYNOPSIS
+========
+
+pathfind [ --all ] [ --?  ] [ --help ] [ --version ] envvar [ file(s) ]
+
+
+File: pathfind.info,  Node: OPTIONS,  Next: DESCRIPTION,  Prev: SYNOPSIS,  Up: Top
+
+OPTIONS
+=======
+
+pathfind options can be prefixed with either one or two hyphens, and
+can be abbreviated to any unique prefix.  Thus, -v, -ver, and --version
+are equivalent.
+
+To avoid confusion with options, if a filename begins with a hyphen, it
+must be disguised by a leading absolute or relative directory path,
+e.g., /tmp/-foo or ./-foo.
+
+`-all'
+     Search all directories for each specified file, instead of
+     reporting just the first instance of each found in the search path.
+
+`-?'
+     Same as -help.
+
+`-help'
+     Display a brief help message on stdout, giving a usage
+     description, and then terminate immediately with a success return
+     code.
+
+`-version'
+     Display the program version number and release date on stdout, and
+     then terminate immediately with a success return code.
+
+
+
+File: pathfind.info,  Node: DESCRIPTION,  Next: SEE ALSO,  Prev: OPTIONS,  Up: Top
+
+DESCRIPTION
+===========
+
+pathfind searches a colon-separated directory search path defined by
+the value of the environment variable, envvar, for specified files,
+reporting their full path on stdout, or complaining filename: not found
+on stderr if a file cannot be found anywhere in the search path.
+
+pathfind's exit status is 0 on success, and otherwise is the number of
+files that could not be found, possibly capped at the exit code limit
+of 125.
+
+For example,
+
+          pathfind PATH ls
+
+
+reports
+
+          /bin/ls
+
+
+on most Unix systems, and
+
+          pathfind --all PATH gcc g++
+
+
+reports
+
+          /usr/local/bin/gcc
+          /usr/bin/gcc
+          /usr/local/gnat/bin/gcc
+          /usr/local/bin/g++
+          /usr/bin/g++
+
+
+on some systems.
+
+
+File: pathfind.info,  Node: SEE ALSO,  Prev: DESCRIPTION,  Up: Top
+
+SEE ALSO
+========
+
+find(1), locate(1), slocate(1), type(1), whence(1), where(1),
+whereis(1).  
+
+
+
+Tag Table:
+Node: Top77
+Node: NAME251
+Node: SYNOPSIS381
+Node: OPTIONS552
+Node: DESCRIPTION1448
+Node: SEE ALSO2290
+
+End Tag Table

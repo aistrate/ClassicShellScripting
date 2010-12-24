@@ -1,0 +1,6 @@
+find / -user ben -print | xargs chown 301
+find / -user jhancock -print | xargs chown 300
+find / -user abe -print | xargs chown 4
+find / -user tj -print | xargs chown 5
+find / -user dorothy -print | xargs chown 6
+find / -user toto -print | xargs chown 7

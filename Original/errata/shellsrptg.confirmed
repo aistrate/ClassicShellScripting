@@ -1,0 +1,45 @@
+
+Classic Shell Scripting 
+by Arnold Robbins, Nelson H.F. Beebe
+
+This errata page lists errors outstanding in the most recent printing.
+
+If you have technical questions or error reports, you can send them to
+booktech@oreilly.com.  Please specify the printing date of your copy.
+
+This page was updated June  8, 2005.
+
+Here's a key to the markup:
+	[page-number]: serious technical mistake
+	{page-number}: minor technical mistake
+	<page-number>: important language/formatting problem
+	(page-number): language change or minor formatting problem
+	?page-number?: reader question or request for clarification
+
+
+
+Confirmed errors:
+
+
+(168-169) Table 7-9;
+
+Table 7-9 has several problems:
+1. All the items marked with a lower case 'a' should instead have a dagger on them.
+
+2. The entry for ". (dot)" should also have a dagger on it.
+
+3. In the right hand column for the entry for ". (dot)" the end of the line should have the 'a' table footnote marker.
+
+
+
+(196) Middle of page;
+ "... and another to replace newlines by spaces" 
+should be:
+ "... and another to replace newlines with spaces"
+
+
+(372) Second para. up from bottom, 
+missing space in "the first tenrecords in the list."
+
+
+(482) Learning the bash shell is now in it's third edition, but only the second is referenced.

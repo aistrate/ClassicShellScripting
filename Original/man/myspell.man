@@ -1,0 +1,356 @@
+.\" ========================================================
+.TH MYSPELL 1 "25 June 2003" "1.00"
+.\" ========================================================
+.SH NAME
+myspell \(em report spelling exceptions
+.\" ========================================================
+.SH SYNOPSIS
+.B myspell
+[
+.B \-?
+]
+[
+.BI \-dictionary " dictfile"
+]
+[
+.B \-help
+]
+.if n .ti +\w'\fBmyspell\fP\ 'u
+[
+.BI \-locale " name"
+]
+[
+.BI \-privatedictionary " dictfile"
+]
+.if n .ti +\w'\fBmyspell\fP\ 'u
+.if t .ti +\w'\fBmyspell\fP\ 'u
+[
+.BI \-suffixrules " rulefile"
+]
+[
+.B \-verbose
+]
+.if n .ti +\w'\fBmyspell\fP\ 'u
+[
+.B \-version
+]
+[
+.B +dictfile
+]
+[
+.B =rulefile
+]
+.if n .ti +\w'\fBmyspell\fP\ 'u
+[
+.B \-\|\-
+]
+[
+.I file(s)
+]
+.\" ========================================================
+.SH DESCRIPTION
+.B myspell
+(pronounced
+.IR misspell )
+reports spelling exceptions (i.e., words from files, or
+.IR stdin ,
+that are not found in the combined system and private
+dictionaries, possibly after stripping word suffixes) as a
+sorted list of unique words, or locators and words, on
+.IR stdout .
+.PP
+A word to be spell checked may contain any ASCII letter or
+apostrophe, or any character in the range 128\|.\|.\|255.
+All other characters are silently ignored.
+.PP
+With suitable locale-specific dictionaries, and optionally,
+suffix rules,
+.B myspell
+can check spelling for files in any human language that can
+be encoded in ASCII, or any of the ISO 8859-n code pages, or
+Unicode in UTF-8 encoding, provided that whitespace
+separates words.  [Languages that lack word separators, such
+as Lao and Thai, require sophisticated grammatical analysis
+to identify words.]  For Unicode, some prefiltering may be
+needed to remove Unicode punctuation (otherwise, it will
+simply be reported as spelling exceptions).
+.PP
+If the files to be spell checked contain document markup,
+that markup should usually be stripped by a suitable initial
+filter step; see the
+.B EXAMPLES
+section below.
+.\" ========================================================
+.SH OPTIONS
+.B myspell
+options can be prefixed with either one or two hyphens, and
+can be abbreviated to any unique prefix.  Thus,
+.BR \-h ,
+.BR \-hel ,
+and
+.B \-\|\-help
+are equivalent.
+.PP
+To avoid confusion with options, if a filename begins with a
+hyphen, it must be disguised by a leading absolute or
+relative directory path, e.g.,
+.I /tmp/-foo
+or
+.IR ./-foo .
+Alternatively, precede the file list with the
+.B \-\|\-
+option.
+.\" --------------------------------------------------------
+.TP \w'\fB\-version\fP'u+3n
+.B \-\|\-
+Everything following on the command line is a filename, even
+if it looks like an option.
+.\" --------------------------------------------------------
+.TP
+.B \-?
+Same as
+.BR \-help .
+.\" --------------------------------------------------------
+.TP
+.BI \-dictionary  " dictfile"
+Add
+.I dictfile
+to the list of system dictionaries.  If a locale is set,
+there may be locale-dependent dictionaries already in the
+list.  This option may be used any number of times.
+.IP
+If this option is not specified, and no locale is set, then
+.B myspell
+will use a built-in list of system dictionaries.
+.\" --------------------------------------------------------
+.TP
+.B \-help
+Display a brief help message on
+.IR stderr ,
+giving a usage description, and then terminate immediately
+with a success return code.
+.\" --------------------------------------------------------
+.TP
+.BI \-locale " name"
+Set the locale temporarily to
+.IR name ,
+which must be an ISO country code and name of a directory in
+the
+.B myspell
+installation tree.  This selects the language of the
+documents to be spell checked.
+.\" --------------------------------------------------------
+.TP
+.BI \-privatedictionary " dictfile"
+Add the private dictionary
+.I dictfile
+to the list of private dictionaries that augment the system
+dictionary.  Typically, this is a document-specific list of
+exceptional words known to be correctly spelled.  This
+option may be used any number of times.
+.IP
+For
+.BR spell (1)
+compatibility, this option may be abbreviated to
+.IR +dictfile .
+.\" --------------------------------------------------------
+.TP
+.BI \-strip
+Strip word suffixes according to user-defined or
+locale-specific rules.  This usually reduces the number of
+false reports.
+.\" --------------------------------------------------------
+.TP
+.BI \-suffixrules " rulefile"
+Supply additional suffix rules in
+.IR rulefile .
+.IP
+This option may be abbreviated to
+.IR =rulefile .
+.\" --------------------------------------------------------
+.TP
+.BI \-verbose
+Include a location report of the form
+.I filename:linenumber:
+as a prefix of every spelling exception, and sort the report
+by location.  This option may be abbreviated to a single
+letter.
+.\" --------------------------------------------------------
+.TP
+.B \-version
+Display the program version number and release date on
+.IR stderr ,
+and then terminate immediately with a success return code.
+.\" --------------------------------------------------------
+.TP
+.B +dictfile
+Shorthand for
+.BI \-privatedictionary " dictfile."
+This option may be used any number of times (unlike in
+.BR spell (1)).
+.\" --------------------------------------------------------
+.TP
+.B =rulefile
+Shorthand for
+.BI \-suffixrules " rulefile."
+This option may be used any number of times.
+.\" ========================================================
+.SH EXAMPLES
+In these examples, we use file suffixes of \fC.ser\fP
+(spelling errors) for exception lists, and \fC.sok\fP
+(spelling okay) for private dictionaries, but these are
+merely conventions, without significance for
+.BR myspell .
+.RS
+.nf
+\fCmyspell report.txt > report.ser
+myspell +report.sok report.txt > report.ser
+deroff *.rno | myspell -s french.sfx > temp.ser
+detex *.tex | myspell -p mydict.sok > temp.ser
+dehtml *.html | myspell -l fr =french.sfx > temp.ser
+dexml *.xml | myspell -locale da > temp.ser
+dexml *.xml | myspell -l da =danish.sfx > temp.ser\fP
+.fi
+.RE
+.\" ========================================================
+.SH DICTIONARIES
+Dictionaries are simply lists of words known to be correctly
+spelled, stored one word per line, without any leading or
+trailing whitespace.  Unlike dictionaries for other spell
+checkers, those for
+.B myspell
+need not be sorted.  However, if dictionaries are to be
+shared between spell checkers, they should be kept sorted,
+and for each language, the locale used for the sort must be
+consistent.
+.PP
+Once the input is free of spelling errors, the output of
+.B myspell
+will be a list of exceptional words that are not in the
+current dictionaries, but are known to be correct.  They can
+be added to a private dictionary that is used on subsequent
+runs, thereby reducing the size of future reports.
+.PP
+There are numerous sources of word lists for various
+languages on the Internet (search for
+.I "word list"
+with your favorite search engine), e.g.,
+.RS
+.nf
+\&\fCftp://ftp.ox.ac.uk/pub/wordlists/
+ftp://ibiblio.org/pub/docs/books/gutenberg/etext96/pgw*
+ftp://qiclab.scn.rain.com/pub/wordlists/
+http://www.phreak.org/html/wordlists.shtml\fP
+.fi
+.RE
+Dictionaries for other spell checkers can usually be
+trivially adapted for use with
+.BR myspell .
+.PP
+In addition, any corpus of text in a single language that is
+known to be relatively free of errors can be easily filtered
+with
+.BR tr (1)
+and
+.BR sort (1)
+to produce a candidate spelling dictionary for any
+language that is not yet supported by
+.BR myspell .
+Internet archives of articles, books, reports, theses, and
+even news stories can often be readily located by Web search
+engines.
+.\" ========================================================
+.SH "SUFFIX RULES"
+Suffix rules guide reduction of the input word lists to
+reduce dictionary sizes and reduce false reports.  As such,
+they are
+.IR "entirely optional" .
+.PP
+Suffix rules are defined in simple text files that contain
+one rule per line, beginning with a suffix regular
+expression, and followed by a possibly-empty list of
+replacement suffixes, one of which may be the empty string,
+indicated by adjacent quotation marks. Comments run from
+sharp (#) to end of line, and blank lines are ignored.
+.PP
+Here is a short example for English:
+.RS
+.nf
+\&\fC
+\&'$                      # Jones' -> Jones
+\&'s$                     # it's -> it
+\&ed$     "" e            # breaded -> bread, flamed -> flame
+\&ied$    ie y            # died -> die, cried -> cry
+\&ly$     ""              # acutely -> acute
+\&s$                      # cats -> cat\fP
+.fi
+.RE
+.PP
+While suffix rules suffice for many Indo-European languages,
+others don't need them at all, and still others have more
+complex changes in spelling as words change in case, number,
+or tense.  For such languages, the simplest solution seems
+to be a larger dictionary that incorporates at least all of
+the common word forms.
+.\" ========================================================
+.SH FILES
+.\"---------------------------------------------------------
+.TP
+.I /usr/local/share/myspell/myspell-x.y.z/locale/XX/*.dict
+Default dictionaries for locale
+.IR XX .
+.\"---------------------------------------------------------
+.TP
+.I /usr/local/share/myspell/myspell-x.y.z/locale/XX/*.sfx
+Default suffix rules for locale
+.IR XX .
+.\"---------------------------------------------------------
+.TP
+.I /usr/local/share/myspell/myspell-x.y.z/spell.awk
+Spell checker source program.
+.\" ========================================================
+.SH "SEE ALSO"
+.BR aspell (1),
+.BR dehtml (1),
+.BR deroff (1),
+.BR desgml (1),
+.BR detex (1),
+.BR dexml (1),
+.BR ispell (1),
+.BR locale (1),
+.BR sort (1),
+.BR spell (1),
+.BR tr (1).
+.\" ========================================================
+.SH BUGS
+No options are provided to select language variants, such as
+American, Canadian, and British English.  These can still be
+handled with supplemental dictionaries specified with the
+.B \-dictionary
+or
+.B \-privatedictionary
+options.
+.PP
+Much more work needs to be done to provide language-specific
+suffix-rule files, and to collect dictionaries for many more
+languages.
+.\" ========================================================
+.SH AUTHOR
+.nf
+Nelson H. F. Beebe
+Center for Scientific Computing
+University of Utah
+Department of Mathematics, 110 LCB
+155 S 1400 E RM 233
+Salt Lake City, UT 84112-0090
+Tel: +1 801 581 5254
+FAX: +1 801 581 4148
+Email: \fCbeebe@math.utah.edu\fP, \fCbeebe@acm.org\fP,
+       \fCbeebe@ieee.org\fP, \fCbeebe@computer.org\fP (Internet)
+WWW URL: \fChttp://www.math.utah.edu/~beebe\fP
+.fi
+.\"=====================================================================
+.\" This is for GNU Emacs file-specific customization:
+.\" Local Variables:
+.\" fill-column: 60
+.\" End:
