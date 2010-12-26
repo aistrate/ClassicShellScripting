@@ -1,0 +1,6 @@
+#! /bin/sh
+
+# usage:   head N file
+
+count=$1
+sed ${count}q "$2"
